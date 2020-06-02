@@ -12,19 +12,28 @@
         <router-link to='/seller'>商家</router-link>
       </div>
     </div>
-    <router-view :seller='seller'></router-view>
+    <keep-alive>
+      <router-view :seller='seller'></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
   import header from './components/header/header.vue';
+  import {urlParse} from './common/js/util';
 
   const ERR_OK = 0;
 
   export default {
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            console.log(queryParam);
+            return queryParam.id;
+          })()
+        }
       };
     },
 
@@ -34,8 +43,11 @@
         res = res.body;
         if (res.errno === ERR_OK) {
           // 保存数据
-          this.seller = res.data;
+          // this.seller = res.data;
           // console.log(res.data);
+          // 保存id
+          this.seller = Object.assign({}, this.seller, res.data);
+          console.log(this.seller.id);
         }
       });
     },
